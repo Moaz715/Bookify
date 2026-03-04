@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const reviewSchema = new Schema({
     _id: { 
@@ -10,6 +10,11 @@ const reviewSchema = new Schema({
     bookId:{
         type: String,
         ref: 'Book',
+        required: true
+    },
+    userId:{
+        type: String,
+        ref: 'User',
         required: true
     },
     description:{

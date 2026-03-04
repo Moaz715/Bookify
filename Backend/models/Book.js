@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-const Schema = mongoose.Schema
+const Review = require('./Review'); // 1. Import the Review model!
+const Schema = mongoose.Schema;
 
 const bookSchema = new Schema({
     _id: { 
@@ -31,5 +32,16 @@ const bookSchema = new Schema({
         required: true
     }
 }, {timestamps: true});
+
+
+bookSchema.post('findOneAndDelete', async function (doc) {
+    
+    if (doc) {
+        await Review.deleteMany({
+            bookId: doc._id
+        });
+        console.log(`Automatically deleted reviews for book: ${doc._id}`);
+    }
+});
 
 module.exports = mongoose.model('Book', bookSchema);
