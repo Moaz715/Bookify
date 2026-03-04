@@ -7,6 +7,11 @@ const reviewSchema = new Schema({
         type: String, 
         default: uuidv4
     },
+    bookId:{
+        type: String,
+        ref: 'Book',
+        required: true
+    },
     description:{
         type: String,
         required: true

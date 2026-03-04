@@ -1,4 +1,3 @@
-// backend/controllers/bookController.js
 const Book = require('../models/Book');
 
 module.exports.index = async (req, res, next) => {

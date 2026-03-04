@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bookRoutes = require('./routes/bookRoutes');
-require('dotenv').config();
+const reviewRoutes = require('./routes/reviewRoutes');
+
 
 const app = express();
 
@@ -11,6 +13,8 @@ app.use(express.json());
 
 
 app.use('/api/books', bookRoutes);
+app.use('/api/books/:bookId/reviews', reviewRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 
 app.use((err, req, res, next) => {
