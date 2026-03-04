@@ -1,24 +1,24 @@
 const Book = require('../models/Book');
 
-module.exports.index = async (req, res, next) => {
+module.exports.index = async (req, res) => {
     const books = await Book.find({});
     res.status(200).json(books);
 };
 
-module.exports.getBook = async (req, res, next) => {
+module.exports.getBook = async (req, res) => {
     const { id } = req.params;
     const book = await Book.findById(id);
     if (!book) return res.status(404).json({ message: "Book not found" });
     res.status(200).json(book);
 };
 
-module.exports.createBook = async (req, res, next) => {
+module.exports.createBook = async (req, res) => {
     const { title, authors, genre, price, image = "", description } = req.body;
     const newBook = await Book.create({ title, authors, genre, price, image, description });
     res.status(200).json(newBook);
 };
 
-module.exports.updateBook = async (req, res, next) => {
+module.exports.updateBook = async (req, res) => {
     const { id } = req.params;
     const { title, authors, genre, price, image = "", description } = req.body;
     
