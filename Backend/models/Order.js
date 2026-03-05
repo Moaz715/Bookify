@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {v4, uuid} = reuire('uuid');
+const {v4, uuid} = require('uuid');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({

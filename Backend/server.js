@@ -5,7 +5,7 @@ const cors = require('cors');
 const bookRoutes = require('./routes/bookRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
-
+const orderRoutes = require('./routes/orderRoutes');
 const app = express();
 
 app.use(cors()); 
@@ -16,6 +16,7 @@ app.use('/api/books', bookRoutes);
 app.use('/api/books/:bookId/reviews', reviewRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/users/', userRoutes);
+app.use('/api/orders/', orderRoutes);
 
 
 app.use((err, req, res, next) => {

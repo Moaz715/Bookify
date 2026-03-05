@@ -3,13 +3,13 @@ const Order = require('../models/Order');
 // User id still not implemented so we will not test this yet
 
 module.exports.createOrder = async (req, res) =>{
-    const {items, totalAmount, status, stripePaymentId=""} = req.body;
+    const {items, totalAmount, stripePaymentId=""} = req.body;
 
     const newOrder = await Order.create({
         userId: req.user._id,              //here it is used
         items,
         totalAmount,
-        status,
+        status : "Processing",
         stripePaymentId
     });
 
@@ -17,7 +17,7 @@ module.exports.createOrder = async (req, res) =>{
 }
 
 module.exports.getUserOrders = async (req, res) =>{
-    const {userId} = req.user._id;             //here it is used
+    const userId = req.user._id;             //here it is used
 
     const orders = await Order.find({userId}).sort({createdAt:-1});
 
