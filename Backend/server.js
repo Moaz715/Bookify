@@ -20,11 +20,20 @@ app.use('/api/orders/', orderRoutes);
 
 
 app.use((err, req, res, next) => {
-    console.error("Error caught by Global Handler:", err.message);
+    let statusCode = err.statusCode || 500;
+    let message = err.message || "Something went wrong on the server";
+
     
+    if (err.name === 'JsonWebTokenError') {
+        statusCode = 401;
+        message = 'Invalid token. Please log in again.';
+    }
+
     
-    const statusCode = err.statusCode || 500;
-    const message = err.message || "Something went wrong on the server";
+    if (err.name === 'TokenExpiredError') {
+        statusCode = 401;
+        message = 'Your session has expired. Please log in again.';
+    }
 
     res.status(statusCode).json({
         success: false,

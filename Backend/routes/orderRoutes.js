@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const orderController = require('../controllers/orderController');
+const requireAuth = require('../middleware/requireAuth');
+
+router.use(catchAsync(requireAuth));
 
 router.route('/')
     .get(catchAsync(orderController.getAllOrders))
