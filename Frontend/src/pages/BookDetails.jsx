@@ -8,7 +8,7 @@ const BookDetails = () => {
 
     useEffect(() => {
         const fetchBookDetails = async () => {
-            const res = await fetch(`http://localhost:5000/api/books/${id}`);
+            const res = await fetch(`/api/books/${id}`);
             const json = await res.json();
 
             if (res.ok) {
