@@ -1,7 +1,10 @@
 const Book = require('../models/Book');
 
 module.exports.index = async (req, res) => {
-    const books = await Book.find({});
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page-1) * limit;
+    const books = await Book.find({}).skip(skip).limit(limit);
     res.status(200).json(books);
 };
 

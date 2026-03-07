@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-const Review = require('./Review'); // 1. Import the Review model!
+const Review = require('./Review');
 const Schema = mongoose.Schema;
 
 const bookSchema = new Schema({
@@ -30,6 +30,14 @@ const bookSchema = new Schema({
     description:{
         type: String,
         required: true
+    },
+    totalReviews:{
+        type: Number,
+        default: 0,
+    },
+    averageRating:{
+        type: Number,
+        default: 0.0
     }
 }, {timestamps: true});
 
