@@ -12,7 +12,7 @@ const BookDetails = () => {
 
     const handleAddToCart = () =>{
         dispatch({
-            type: 'ADD_ITEM',
+            type: 'ADD_BOOK',
             payload: {...book, quantity: qty}
         });
     }

@@ -15,7 +15,7 @@ export const cartReducer = (state, action) =>{
                     )
                 };
         }else{
-            return {cart: [...state.cart, {...action.payload, quantity: 1}]};
+            return {cart: [...state.cart, {...action.payload, quantity: action.payload.quantity}]};
         }
     }else if(action.type == 'REMOVE_BOOK'){
         return {cart: state.cart.filter(book => book._id !== action.payload._id)};
