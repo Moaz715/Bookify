@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {useCartContext} from "../hooks/useCartContext";
+import { useCartContext } from "../hooks/useCartContext";
+import '../styles/BookDetails.css';
 
 const BookDetails = () => {
     const { id } = useParams();
     const [book, setBook] = useState(null);
     const [qty, setQty] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
-    const {dispatch} = useContext(useCartContext);
+    const { dispatch } = useCartContext();
 
     const handleAddToCart = () =>{
         dispatch({
@@ -18,7 +19,7 @@ const BookDetails = () => {
 
     useEffect(() => {
         const fetchBookDetails = async () => {
-            const res = await fetch(`/books/${id}`);
+            const res = await fetch(`/api/books/${id}`);
             const json = await res.json();
 
             if (res.ok) {

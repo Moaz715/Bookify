@@ -1,0 +1,73 @@
+.book-card {
+  background: var(--card-bg);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+}
+
+.book-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.book-info {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.book-info h4 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 5px;
+}
+
+.author {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 15px;
+  margin-top: auto; /* Pushes price to the bottom */
+}
+
+.details-btn, .book-info > button {
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+/* Specific to CartCard */
+.book-info span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.book-info span button {
+  background: #e5e7eb;
+  color: var(--text-main);
+  padding: 5px 10px;
+}

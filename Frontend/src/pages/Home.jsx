@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import BookCard from "../components/BookCard";
+import '../styles/Home.css';
 
 const Home = () => {
     const [books, setBooks] = useState(null);
 
     useEffect(() => {
         const getBooks = async () => {
-            const res = await fetch('/books/', {
+            const res = await fetch('/api/books/', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });

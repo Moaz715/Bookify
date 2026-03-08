@@ -1,4 +1,5 @@
 import { useCartContext } from "../hooks/useCartContext";
+import '../styles/Cards.css';
 
 const CartCard = ({ book }) => {
     const { dispatch } = useCartContext();
