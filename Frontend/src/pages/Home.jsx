@@ -6,7 +6,7 @@ const Home = () => {
 
     useEffect(() => {
         const getBooks = async () => {
-            const res = await fetch('http://localhost:5000/api/books/', {
+            const res = await fetch('/books/', {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });

@@ -15,6 +15,7 @@ function App() {
         <div className='pages'>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/books/:id" element={<BookDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Routes>

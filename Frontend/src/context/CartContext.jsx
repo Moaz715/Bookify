@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 
-export const BookContext = createContext();
+export const CartContext = createContext();
 
 export const cartReducer = (state, action) =>{
     if(action.type == 'ADD_BOOK'){
@@ -9,24 +9,33 @@ export const cartReducer = (state, action) =>{
         if(exists){
             return {
                     cart: state.cart.map(book => 
-                        book._id === action.payload._id 
-                            ? { ...book, quantity: book.quantity + 1 } 
+                        book._id === action.payload._id
+                            ? { ...book, quantity: book.quantity + action.payload.quantity} 
                             : book
                     )
                 };
         }else{
-            return {cart: [...state.cart, {...action.payload, qty: 1}]};
+            return {cart: [...state.cart, {...action.payload, quantity: 1}]};
         }
     }else if(action.type == 'REMOVE_BOOK'){
         return {cart: state.cart.filter(book => book._id !== action.payload._id)};
-    }else{
+    }else if(action.type == 'INCREMENT'){
+        return {
+            cart: state.cart.map(book => book._id === action.payload._id ? {...book, quantity: book.quantity + 1} : book)
+        }
+    }else if(action.type === 'DECREMENT'){
+        return {
+            cart: state.cart.map(book => book._id === action.payload._id && book.quantity > 1 ? {...book, quantity: book.quantity - 1} : book)
+        }
+    }
+    else{
         return state;
     }
 }
 
-export const CartContextProvider = (props) =>{
+export const CartContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, { 
-        cart: [] 
+        cart: []
     });
 
     return(

@@ -21,8 +21,8 @@ const Navbar = () => {
                         <button onClick={handleClick}>Log out</button>
                     </div>
                     <div>
-                        <Link to="/api/users/login">Login</Link>
-                        <Link to="/signup">Signup</Link>
+                        <Link to="/users/login">Login</Link>
+                        <Link to="/users/signup">Signup</Link>
                     </div>
                 </nav>
             </div>
