@@ -12,7 +12,6 @@ const orderSchema = new Schema({
         ref: 'User',
         required: true
     },
-    // The items array maps out exactly what was in their cart
     items: [
         {
             bookId: {

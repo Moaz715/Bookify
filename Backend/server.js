@@ -23,6 +23,9 @@ app.use((err, req, res, next) => {
     let statusCode = err.statusCode || 500;
     let message = err.message || "Something went wrong on the server";
 
+    if (err.name === 'ValidationError' || message.includes('Password') || message.includes('Email')) {
+        statusCode = 400;
+    }
     
     if (err.name === 'JsonWebTokenError') {
         statusCode = 401;
@@ -37,7 +40,7 @@ app.use((err, req, res, next) => {
 
     res.status(statusCode).json({
         success: false,
-        message: message,
+        error: message,
         stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
 });

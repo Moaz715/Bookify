@@ -27,6 +27,11 @@ export const cartReducer = (state, action) =>{
         return {
             cart: state.cart.map(book => book._id === action.payload._id && book.quantity > 1 ? {...book, quantity: book.quantity - 1} : book)
         }
+    }else if(action.type === 'CLEAR'){
+        state.cart.length = 0;
+        return{
+            cart: state.cart
+        }
     }
     else{
         return state;
