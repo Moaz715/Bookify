@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCartContext } from "../hooks/useCartContext";
 import '../styles/BookDetails.css';
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 const BookDetails = () => {
     const { id } = useParams();
@@ -9,8 +11,14 @@ const BookDetails = () => {
     const [qty, setQty] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const { dispatch } = useCartContext();
+    const {user} = useAuthContext();
+    const navigate = useNavigate();
 
     const handleAddToCart = () =>{
+        if(!user){
+            navigate('/login');
+            return;
+        }
         dispatch({
             type: 'ADD_BOOK',
             payload: {...book, quantity: qty}
