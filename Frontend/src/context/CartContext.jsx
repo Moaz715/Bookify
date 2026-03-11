@@ -2,48 +2,47 @@ import { createContext, useState, useReducer } from "react";
 
 export const CartContext = createContext();
 
-export const cartReducer = (state, action) =>{
-    if(action.type == 'ADD_BOOK'){
-        const exists = state.cart.find(book=> book._id === action.payload._id);
+export const cartReducer = (state, action) => {
+    if (action.type == 'ADD_BOOK') {
+        const exists = state.cart.find(book => book._id === action.payload._id);
 
-        if(exists){
+        if (exists) {
             return {
-                    cart: state.cart.map(book => 
-                        book._id === action.payload._id
-                            ? { ...book, quantity: book.quantity + action.payload.quantity} 
-                            : book
-                    )
-                };
-        }else{
-            return {cart: [...state.cart, {...action.payload, quantity: action.payload.quantity}]};
+                cart: state.cart.map(book =>
+                    book._id === action.payload._id
+                        ? { ...book, quantity: book.quantity + action.payload.quantity }
+                        : book
+                )
+            };
+        } else {
+            return { cart: [...state.cart, action.payload] };
         }
-    }else if(action.type == 'REMOVE_BOOK'){
-        return {cart: state.cart.filter(book => book._id !== action.payload._id)};
-    }else if(action.type == 'INCREMENT'){
+    } else if (action.type == 'REMOVE_BOOK') {
+        return { cart: state.cart.filter(book => book._id !== action.payload._id) };
+    } else if (action.type == 'INCREMENT') {
         return {
-            cart: state.cart.map(book => book._id === action.payload._id ? {...book, quantity: book.quantity + 1} : book)
+            cart: state.cart.map(book => book._id === action.payload._id ? { ...book, quantity: book.quantity + 1 } : book)
         }
-    }else if(action.type === 'DECREMENT'){
+    } else if (action.type === 'DECREMENT') {
         return {
-            cart: state.cart.map(book => book._id === action.payload._id && book.quantity > 1 ? {...book, quantity: book.quantity - 1} : book)
+            cart: state.cart.map(book => book._id === action.payload._id && book.quantity > 1 ? { ...book, quantity: book.quantity - 1 } : book)
         }
-    }else if(action.type === 'CLEAR'){
-        state.cart.length = 0;
-        return{
-            cart: state.cart
+    } else if (action.type === 'CLEAR') {
+        return {
+            cart: []
         }
     }
-    else{
+    else {
         return state;
     }
 }
 
 export const CartContextProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(cartReducer, { 
+    const [state, dispatch] = useReducer(cartReducer, {
         cart: []
     });
 
-    return(
+    return (
         <CartContext.Provider value={{ ...state, dispatch }}>
             {children}
         </CartContext.Provider>
