@@ -10,7 +10,7 @@ module.exports.createReview = async (req, res) => {
 
     const newReview = await Review.create({
         bookId,
-        userId: req.user._id, 
+        userId: req.user._id,
         description,
         rating
     });
