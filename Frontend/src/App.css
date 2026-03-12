@@ -1,9 +1,15 @@
 .App {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  /* We removed the max-width from here so the Navbar background can stretch! */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .pages {
-  padding: 40px 0;
+  /* We moved the 1200px constraint to the content area instead */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+  flex-grow: 1; /* Pushes any future footer to the bottom */
 }

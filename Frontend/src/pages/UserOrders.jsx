@@ -1,14 +1,15 @@
 import OrderList from "../components/OrderList";
-import {useState, useEffect} from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import '../styles/Orders.css';
 
 const UserOrders = () => {
     const [orders, setOrders] = useState(null);
-    const {user} = useAuthContext();
+    const { user } = useAuthContext();
 
     useEffect(() => {
         const getUserOrders = async () => {
+
             const res = await fetch('/api/orders/user', {
                 method: 'GET',
                 headers: { 
@@ -26,16 +27,17 @@ const UserOrders = () => {
         getUserOrders();
     }, [user]);
 
-
     return (
-        <div className="orders-page" style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px' }}>
-            <h2 style={{ marginBottom: '20px' }}>Your Orders</h2>
+        <div className="orders-page">
+            <h2>Your Orders</h2>
+            
             {orders && orders.length === 0 && (
-                <p>You haven't placed any orders yet.</p>
+                <p style={{ color: 'var(--text-light)' }}>You haven't placed any orders yet.</p>
             )}
+            
             <div>
                 {orders && orders.map((order, i) => (
-                    <OrderList key={order._id} order={order} orderNum={orders.length-i}/>
+                    <OrderList key={order._id} order={order} orderNum={orders.length - i} />
                 ))}
             </div>
         </div>

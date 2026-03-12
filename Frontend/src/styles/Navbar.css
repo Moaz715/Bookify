@@ -1,12 +1,16 @@
 header {
-  background: var(--card-bg);
-  padding: 20px 0;
-  border-bottom: 2px solid #e5e7eb;
+  background: #ffffff; /* Crisp white */
+  padding: 15px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Soft shadow instead of hard border */
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header > div {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px; /* Prevents touching the edge on small screens */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -14,33 +18,48 @@ header > div {
 
 header a {
   text-decoration: none;
-  color: var(--text-main);
+  color: var(--text-main, #333);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+header a:hover {
+  color: var(--primary);
 }
 
 header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.8rem;
+  font-weight: 800;
   color: var(--primary);
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
 nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 30px; /* Much better spacing between sections */
 }
 
 nav div {
   display: flex;
-  gap: 15px;
+  gap: 20px; /* Spacing between the text links */
   align-items: center;
 }
 
+/* The Logout Button */
 nav button {
-  background: white;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  padding: 6px 12px;
-  border-radius: 4px;
+  background: transparent;
+  color: var(--error, #e53e3e);
+  border: 1px solid var(--error, #e53e3e);
+  padding: 8px 16px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+nav button:hover {
+  background: var(--error, #e53e3e);
+  color: white;
 }
