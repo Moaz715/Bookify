@@ -23,6 +23,7 @@ const Navbar = () => {
                     {user && <div>
                         <button onClick={handleClick}>Log out</button>
                         <Link to="/cart">Cart</Link>
+                        <Link to="/orders">My Orders</Link>
                     </div>}
                     {!user && <div>
                         <Link to="/login">Login</Link>
