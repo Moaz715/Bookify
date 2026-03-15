@@ -18,6 +18,24 @@ const BookDetails = () => {
     const [rating, setRating] = useState(5);   
     const [error, setError] = useState(null);
 
+
+    const deleteReview = async (reviewId) => {
+        const res = await fetch(`/api/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+        });
+
+        if (res.ok) {
+            setReviews(prev => {
+                return prev.filter(r => r._id !== reviewId);
+            });
+        } else {
+            setError("Failed to delete Review");
+        }
+    }
     
 
     const handleAddToCart = () =>{
@@ -150,6 +168,8 @@ const BookDetails = () => {
                                 {new Date(review.createdAt).toLocaleDateString()}
                             </span>
                         </p>
+                        <button onClick={() => deleteReview(review._id)}>delete</button>
+                        <button>edit</button>
                     </div>
                 ))}
             </div>
