@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useCartContext } from "../hooks/useCartContext";
 import '../styles/BookDetails.css';
@@ -36,7 +36,12 @@ const BookDetails = () => {
         const json = await res.json();
 
         if (res.ok) {
-            setReviews([json, ...reviews]);
+            setReviews([json.review, ...reviews]);
+            setBook(prev => ({
+                ...prev,
+                totalReviews: json.totalBookReviews,
+                averageRating: json.averageRating
+            }));
             setError(null);
         } else {
             setError(json.error);
@@ -57,7 +62,11 @@ const BookDetails = () => {
         const json = await res.json();
 
         if (res.ok) {
-            setReviews(prev => prev.map(r => r._id === reviewId ? json : r));
+            setReviews(prev => prev.map(r => r._id === reviewId ? json.review : r));
+            setBook(prev => ({
+                ...prev,
+                averageRating: json.averageRating
+            }));
             setEditReviewId(null);
             setError(null);
         } else {
@@ -76,7 +85,13 @@ const BookDetails = () => {
         });
 
         if (res.ok) {
+            const json = await res.json();
             setReviews(prev => prev.filter(r => r._id !== reviewId));
+            setBook(prev => ({
+                ...prev,
+                totalReviews: json.totalBookReviews,
+                averageRating: json.averageRating
+            }));
         } else {
             setError("Failed to delete Review");
         }
@@ -142,7 +157,7 @@ const BookDetails = () => {
                 {reviews && reviews.map(review => (
                     <div key={review._id} className="review">
                         {editReviewId === review._id ? (
-                            <ReviewForm initialContent={review.description} initialRating={review.rating} onSubmit={(newContent, newRating)=>handleEditReview(review._id, newContent, newRating)} onCancel={()=>setEditReviewId(null)} buttonText="Edit Review" />
+                            <ReviewForm initialContent={review.description} initialRating={review.rating} onSubmit={(newContent, newRating) => handleEditReview(review._id, newContent, newRating)} onCancel={() => setEditReviewId(null)} buttonText="Edit Review" />
                         ) : (
                             <>
                                 <p className="review-text"><strong>{review.userId.email}</strong></p>
@@ -153,10 +168,12 @@ const BookDetails = () => {
                                         {new Date(review.createdAt).toLocaleDateString()}
                                     </span>
                                 </p>
-                                <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                                    <button onClick={() => setEditReviewId(review._id)}>Edit</button>
-                                    <button onClick={() => handleDeleteReview(review._id)}>Delete</button>
-                                </div>
+                                {user && user.email === review.userId.email && (
+                                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                                        <button onClick={() => setEditReviewId(review._id)}>Edit</button>
+                                        <button onClick={() => handleDeleteReview(review._id)}>Delete</button>
+                                    </div>
+                                )}
                             </>
                         )}
                     </div>

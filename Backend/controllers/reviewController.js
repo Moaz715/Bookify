@@ -15,15 +15,21 @@ module.exports.createReview = async (req, res) => {
         rating
     });
 
+    await newReview.populate('userId', 'email');
+
     const newTotalReviews = book.totalReviews + 1;
     const newAverageRating = ((book.averageRating * book.totalReviews) + rating) / newTotalReviews;
 
     await Book.findByIdAndUpdate(bookId, {
         totalReviews: newTotalReviews,
-        averageRating: parseFloat(newAverageRating.toFixed(1)) 
+        averageRating: newAverageRating.toFixed(1)
     });
 
-    res.status(201).json(newReview); 
+    res.status(201).json({
+        review: newReview,
+        totalBookReviews: newTotalReviews,
+        averageRating: newAverageRating.toFixed(1)
+    }); 
 }
 
 module.exports.getBookReviews = async (req, res) => {
@@ -61,21 +67,25 @@ module.exports.updateReview = async (req, res) => {
             new: true,
             runValidators: true
         }
-    )
+    ).populate('userId', 'email');
 
     if (!updatedReview) return res.status(404).json({ message: "Review not found" });
 
+    const book = await Book.findById(updatedReview.bookId);
+    let newAverageRating = book.averageRating;
+
     if (oldReview.rating !== rating) {
-        const book = await Book.findById(updatedReview.bookId);
-        
-        const newAverageRating = ((book.averageRating * book.totalReviews) - oldReview.rating + rating) / book.totalReviews;
+        newAverageRating = ((book.averageRating * book.totalReviews) - oldReview.rating + rating) / book.totalReviews;
 
         await Book.findByIdAndUpdate(updatedReview.bookId, {
-            averageRating: parseFloat(newAverageRating.toFixed(1))
+            averageRating: newAverageRating.toFixed(1)
         });
     }
 
-    res.status(200).json(updatedReview);
+    res.status(200).json({
+        review: updatedReview,
+        averageRating: newAverageRating.toFixed(1)
+    });
 }
 
 module.exports.deleteReview = async (req, res) => {
@@ -95,8 +105,12 @@ module.exports.deleteReview = async (req, res) => {
 
     await Book.findByIdAndUpdate(deletedReview.bookId, {
         totalReviews: newTotalReviews,
-        averageRating: parseFloat(newAverageRating.toFixed(1)) 
+        averageRating: newAverageRating.toFixed(1) 
     });
 
-    res.status(200).json(deletedReview);
+    res.status(200).json({
+        review: deletedReview,
+        totalBookReviews: newTotalReviews,
+        averageRating: newAverageRating.toFixed(1)
+    });
 }
