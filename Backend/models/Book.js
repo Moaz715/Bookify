@@ -4,46 +4,52 @@ const Review = require('./Review');
 const Schema = mongoose.Schema;
 
 const bookSchema = new Schema({
-    _id: { 
-        type: String, 
+    _id: {
+        type: String,
         default: uuidv4
     },
-    title:{
-        type:String,
+    title: {
+        type: String,
         required: true
     },
-    authors:{
+    authors: {
         type: [String],
         required: true
     },
-    genre:{
+    genre: {
         type: String,
         required: true
     },
-    price:{
+    price: {
         type: Number,
         required: true
     },
-    image:{
+    stock: {
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0
+    },
+    image: {
         type: String
     },
-    description:{
+    description: {
         type: String,
         required: true
     },
-    totalReviews:{
+    totalReviews: {
         type: Number,
         default: 0,
     },
-    averageRating:{
+    averageRating: {
         type: Number,
         default: 0.0
     }
-}, {timestamps: true});
+}, { timestamps: true });
 
 
 bookSchema.post('findOneAndDelete', async function (doc) {
-    
+
     if (doc) {
         await Review.deleteMany({
             bookId: doc._id
