@@ -1,0 +1,54 @@
+import { useState } from "react";
+import "../styles/BookForm.css";
+
+const BookForm = ({ initialBook = null, onSubmit, error }) => {
+
+    const [title, setTitle] = useState(initialBook?.title || "");
+    const [description, setDescription] = useState(initialBook?.description || "");
+    const [stock, setStock] = useState(initialBook?.stock || 0);
+    const [image, setImage] = useState(initialBook?.image || "");
+    const [price, setPrice] = useState(initialBook?.price || 0);
+    const [genre, setGenre] = useState(initialBook?.genre || "");
+    const [authors, setAuthors] = useState(initialBook?.authors?.join(", ") || "");
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const authorsArray = authors.split(",").map(author => author.trim());
+        onSubmit({
+            title, description, stock, image, price, genre, authors: authorsArray
+        });
+    }
+
+    return (
+        <div className="book-form-container">
+            {error && <div className="error">{error}</div>}
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="title">Title</label>
+                <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <label htmlFor="authors">Authors (comma separated)</label>
+                <input type="text" id="authors" value={authors} onChange={(e) => setAuthors(e.target.value)} required />
+                <label htmlFor="genre">Genre</label>
+                <select id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} required>
+                    <option value="" disabled>Select a genre</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Mystery">Mystery</option>
+                    <option value="Biography">Biography</option>
+                </select>
+                <label htmlFor="price">Price ($)</label>
+                <input type="number" id="price" value={price} onChange={(e) => setPrice(e.target.value)} step="0.01" required />
+                <label htmlFor="stock">Stock</label>
+                <input type="number" id="stock" value={stock} onChange={(e) => setStock(e.target.value)} required />
+                <label htmlFor="image">Image URL</label>
+                <input type="text" id="image" value={image} onChange={(e) => setImage(e.target.value)} />
+                <label htmlFor="description">Description</label>
+                <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
+                <button type="submit">{initialBook ? "Update Book" : "Create Book"}</button>
+            </form>
+        </div>
+    );
+}
+
+export default BookForm;

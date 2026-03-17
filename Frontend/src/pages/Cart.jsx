@@ -7,7 +7,7 @@ import '../styles/Home.css';
 const Cart = () => {
     const { cart, dispatch } = useCartContext();
     const {user} = useAuthContext();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const grandTotal = cart.reduce((sum, book) => {
@@ -15,7 +15,8 @@ const Cart = () => {
     }, 0);
 
     const checkout = async () => {
-
+        setIsLoading(true);
+        alert('gay')
         const formattedItems = cart.map(item => ({
             bookId: item._id,
             quantity: item.quantity,

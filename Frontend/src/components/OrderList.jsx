@@ -14,7 +14,7 @@ const OrderList = ({ order, orderNum }) => {
                 {order.items.map((item) => (
                     <li key={item._id}>
                         <div className="item-details">
-                            <strong>{item.bookId.title}</strong>
+                            <strong>{item.bookId?.title || "Deleted Book"}</strong>
                             <span>Qty: {item.quantity} × ${item.priceAtPurchase.toFixed(2)}</span>
                         </div>
                         <div className="item-price">

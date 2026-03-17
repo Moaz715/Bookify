@@ -24,7 +24,8 @@ const ReviewForm = ({
             <div className="form-group">
                 <label htmlFor="content">Your Review:</label>
                 <textarea 
-                    name="content" 
+                    name="content"
+                    id="content" 
                     rows="4"
                     value={content} 
                     onChange={(e) => setContent(e.target.value)}
@@ -36,6 +37,7 @@ const ReviewForm = ({
                 <input 
                     type="number" 
                     name="rating" 
+                    id="rating"
                     min="1" 
                     max="5"
                     value={rating} 

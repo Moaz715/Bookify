@@ -16,7 +16,7 @@ module.exports.getBook = async (req, res) => {
 };
 
 module.exports.createBook = async (req, res) => {
-    const { title, authors, genre, price, image = "", description } = req.body;
+    const { title, authors, genre, price, stock, image = "", description } = req.body;
     const newBook = await Book.create({ title, authors, genre, price, image, description });
     res.status(200).json(newBook);
 };
