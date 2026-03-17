@@ -143,14 +143,20 @@ const BookDetails = () => {
                 <p>{book.genre}</p>
                 <p>{book.totalReviews}</p>
                 <p>{book.averageRating}/5</p>
-                <input type="number" min="1" value={qty} onChange={(e) => setQty(Number(e.target.value))} />
-                <button onClick={handleAddToCart}>Add to Cart</button>
+                {user && user.role !== 'admin' && (
+                    <>
+                        <input type="number" min="1" value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+                        <button onClick={handleAddToCart}>Add to Cart</button>
+                    </>
+                )}
             </div>
-            <div className="review-form-container">
-                <h3>Leave a Review</h3>
-                {error && <div className="error">{error}</div>}
-                <ReviewForm onSubmit={handleCreateReview} onCancel={null} />
-            </div>
+            {user && user.role !== 'admin' && (
+                <div className="review-form-container">
+                    <h3>Leave a Review</h3>
+                    {error && <div className="error">{error}</div>}
+                    <ReviewForm onSubmit={handleCreateReview} onCancel={null} />
+                </div>
+            )}
             <div className="book-reviews">
                 <h3>Reviews</h3>
                 {reviews && reviews.length === 0 && <p>No reviews yet.</p>}

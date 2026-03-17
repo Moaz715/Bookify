@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
 import '../styles/Cards.css';
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, children }) => {
     return (
         <div className="book-card">
             <img
@@ -13,9 +12,9 @@ const BookCard = ({ book }) => {
                 <h4>{book.title}</h4>
                 <p className="author">By {book.author}</p>
                 <p className="price">${book.price}</p>
-                <Link to={`/books/${book._id}`} className="details-btn">
-                    View Details
-                </Link>
+                <div className="card-actions">
+                    {children} 
+                </div>
             </div>
         </div>
     );

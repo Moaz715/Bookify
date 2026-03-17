@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import '../styles/Home.css';
 
@@ -26,7 +27,9 @@ const Home = () => {
             <h2>Home</h2>
             <div className="books-grid">
                 {books && books.map((book) => (
-                    <BookCard key={book._id} book={book} />
+                    <BookCard key={book._id} book={book}>
+                        <Link to={`/books/${book._id}`}>View Details</Link>
+                    </BookCard>
                 ))}
             </div>
         </div>
