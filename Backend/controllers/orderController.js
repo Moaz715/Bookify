@@ -26,7 +26,7 @@ module.exports.getUserOrders = async (req, res) => {
 
 module.exports.getAllOrders = async (req, res) => {
 
-    const orders = await Order.find({}).sort({ createdAt: -1 });
+    const orders = await Order.find({}).sort({ createdAt: -1 }).populate('userId', 'email').populate('items.bookId', 'title');
 
     res.status(200).json(orders);
 }

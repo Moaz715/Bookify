@@ -1,12 +1,29 @@
-const OrderList = ({ order, orderNum }) => {
+const OrderList = ({ order, orderNum, isAdmin = false, onStatusChange }) => {
     return (
         <div className="order-card">
             <div className="order-header">
-                <h3>Order #{orderNum}</h3>
-                <span className="status-badge">{order.status}</span>
+                <div>
+                    <h3>Order #{orderNum}</h3>
+                    {isAdmin && <p className="customer-email">Customer: {order.userId?.email || "Unknown User"}</p>}
+                </div>
+                
+                {isAdmin ? (
+                    <select 
+                        className="admin-status-select"
+                        value={order.status}
+                        onChange={(e) => onStatusChange(order._id, e.target.value)}
+                    >
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                ) : (
+                    <span className="status-badge">{order.status}</span>
+                )}
             </div>
             
-            <p style={{ color: 'var(--text-light)', fontSize: '0.9rem', marginBottom: '15px' }}>
+            <p className="order-date">
                 Placed on: {new Date(order.createdAt).toLocaleDateString()}
             </p>
             

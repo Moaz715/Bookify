@@ -14,6 +14,7 @@ import AddBook from './pages/AddBook'
 import './App.css'
 import { useAuthContext } from './hooks/useAuthContext'
 import EditBook from './pages/EditBook'
+import ManageOrders from './pages/ManageOrders'
 
 function App() {
   const { user } = useAuthContext();
@@ -47,6 +48,10 @@ function App() {
             <Route
               path="/admin/books/edit/:id"
               element={user && user.role === 'admin' ? <EditBook /> : <Navigate to="/login" />} />
+            <Route
+              path="/admin/orders"
+              element={user && user.role === 'admin' ? <ManageOrders /> : <Navigate to="/login" />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
