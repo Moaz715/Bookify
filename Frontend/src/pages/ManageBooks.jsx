@@ -7,19 +7,24 @@ import "../styles/ManageBooks.css";
 const ManageBooks = () => {
     const [books, setBooks] = useState(null);
     const [error, setError] = useState(null);
+    const [search, setSearch] = useState('');
+    const [filter, setFilter] = useState('None');
+    const [page, setPage] = useState(1);
     const { user } = useAuthContext();
 
     useEffect(() => {
         const fetchBooks = async () => {
-            const res = await fetch('/api/books');
+            const res = await fetch(`/api/books?page=${page}&filter=${filter}&search=${search}`);
             const json = await res.json();
 
             if (res.ok) {
                 setBooks(json);
+            }else{
+                alert(json.error);
             }
         };
         fetchBooks();
-    }, []);
+    }, [page, filter, search]);
 
     const handleDelete = async (bookId) => {
         if (!window.confirm("Are you sure you want to delete this book?")) return;
@@ -42,6 +47,24 @@ const ManageBooks = () => {
         <div className="manage-books-container">
             <h2>Manage Inventory</h2>
             {error && <div className="error">{error}</div>}
+            <div className="admin-controls">
+                <input
+                    type="text"
+                    placeholder="Search books by title..."
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                />
+                <select
+                    value={genreFilter}
+                    onChange={(e) => { setGenreFilter(e.target.value); setPage(1); }}
+                >
+                    <option value="None">All Genres</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Fantasy">Fantasy</option>
+                </select>
+            </div>
             <div className="books-grid">
                 {books && books.map(book => (
                     <BookCard key={book._id} book={book}>

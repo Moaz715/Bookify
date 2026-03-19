@@ -50,3 +50,40 @@
 .admin-delete-btn:hover {
   filter: brightness(1.1); /* Matches the hover effect from your Cards.css */
 }
+
+/* Admin Controls (Search & Filter) */
+.admin-controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.admin-controls input[type="text"] {
+  flex: 1; /* Makes the search bar stretch to fill available space */
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.admin-controls select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+/* Nice glow effect when the admin clicks to type or select */
+.admin-controls input[type="text"]:focus,
+.admin-controls select:focus {
+  outline: none;
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  background-color: #ffffff;
+}

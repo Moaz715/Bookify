@@ -12,6 +12,7 @@ const OrderList = ({ order, orderNum, isAdmin = false, onStatusChange }) => {
                         className="admin-status-select"
                         value={order.status}
                         onChange={(e) => onStatusChange(order._id, e.target.value)}
+                        disabled={order.status === 'Cancelled'}
                     >
                         <option value="Processing">Processing</option>
                         <option value="Shipped">Shipped</option>
