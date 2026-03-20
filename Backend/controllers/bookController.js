@@ -13,7 +13,7 @@ module.exports.index = async (req, res) => {
     }
 
     if(search){
-        query.search = {$regex: search, $options: 'i'};
+        query.title = {$regex: search, $options: 'i'};
     }
 
     const books = await Book.find(query).skip(skip).limit(limit);

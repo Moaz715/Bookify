@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Book = require('../models/Book');
+const User = require('../models/User');
 
 
 module.exports.createOrder = async (req, res) => {
@@ -32,7 +33,19 @@ module.exports.getAllOrders = async (req, res) => {
     const page = req.query.page || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
-    const orders = await Order.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('userId', 'email').populate('items.bookId', 'title');
+    const search = req.query.search || '';
+
+    let query = {};
+
+    if(search){
+        let matchingUsers = await User.find({ email: { $regex: search, $options: 'i' } }).select('_id');
+
+        matchingUsers = matchingUsers.map((u)=>u._id);
+
+        query.userId = {$in: matchingUsers};
+    }
+
+    const orders = await Order.find(query).sort({createdAt: -1}).skip(skip).limit(limit).populate('userId', 'email').populate('items.bookId', 'title');
 
     res.status(200).json(orders);
 }

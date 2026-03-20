@@ -7,7 +7,8 @@ import "../styles/ManageBooks.css";
 const ManageBooks = () => {
     const [books, setBooks] = useState(null);
     const [error, setError] = useState(null);
-    const [search, setSearch] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [search, setSearch] = useState("");
     const [filter, setFilter] = useState('None');
     const [page, setPage] = useState(1);
     const { user } = useAuthContext();
@@ -19,7 +20,7 @@ const ManageBooks = () => {
 
             if (res.ok) {
                 setBooks(json);
-            }else{
+            } else {
                 alert(json.error);
             }
         };
@@ -48,15 +49,32 @@ const ManageBooks = () => {
             <h2>Manage Inventory</h2>
             {error && <div className="error">{error}</div>}
             <div className="admin-controls">
-                <input
-                    type="text"
-                    placeholder="Search books by title..."
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-                />
+                <div style={{ display: 'flex', flex: 1, gap: '10px' }}>
+                    <input
+                        type="text"
+                        placeholder="Search books by title..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                setSearch(searchInput);
+                                setPage(1);
+                            }
+                        }}
+                    />
+                    <button
+                        className="search-btn"
+                        onClick={() => {
+                            setSearch(searchInput);
+                            setPage(1);
+                        }}
+                    >
+                        Search
+                    </button>
+                </div>
                 <select
-                    value={genreFilter}
-                    onChange={(e) => { setGenreFilter(e.target.value); setPage(1); }}
+                    value={filter}
+                    onChange={(e) => { setFilter(e.target.value); setPage(1); }}
                 >
                     <option value="None">All Genres</option>
                     <option value="Fiction">Fiction</option>
