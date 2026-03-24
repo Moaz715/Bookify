@@ -17,11 +17,11 @@ const Navbar = () => {
         <header>
             <div>
                 <Link to="/">
-                    <h1>Home</h1>
+                    <h1>Bookify</h1>
                 </Link>
                 <nav>
-                    {user && <div>
-                        <button onClick={handleClick}>Log out</button>
+                    {user && <button onClick={handleClick}>Log out</button>}
+                    {user && user.role === 'user' && <div>
                         <Link to="/cart">Cart</Link>
                         <Link to="/orders">My Orders</Link>
                     </div>}
