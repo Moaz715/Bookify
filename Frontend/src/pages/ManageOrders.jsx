@@ -94,6 +94,27 @@ const ManageOrders = () => {
                         onStatusChange={handleStatusChange}
                     />
                 ))}
+                {orders && <div className="pagination-controls">
+                    <button
+                        className="page-btn"
+                        onClick={() => setPage(prev => prev - 1)}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </button>
+
+                    <span className="page-indicator">
+                        Page {page}
+                    </span>
+
+                    <button
+                        className="page-btn"
+                        onClick={() => setPage(prev => prev + 1)}
+                        disabled={orders.length < 10}
+                    >
+                        Next
+                    </button>
+                </div>}
             </div>
         </div>
     );

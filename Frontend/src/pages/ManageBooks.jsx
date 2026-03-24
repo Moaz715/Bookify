@@ -48,8 +48,9 @@ const ManageBooks = () => {
         <div className="manage-books-container">
             <h2>Manage Inventory</h2>
             {error && <div className="error">{error}</div>}
+            
             <div className="admin-controls">
-                <div style={{ display: 'flex', flex: 1, gap: '10px' }}>
+                <div className="search-bar-wrapper">
                     <input
                         type="text"
                         placeholder="Search books by title..."
@@ -83,6 +84,7 @@ const ManageBooks = () => {
                     <option value="Fantasy">Fantasy</option>
                 </select>
             </div>
+            
             <div className="books-grid">
                 {books && books.map(book => (
                     <BookCard key={book._id} book={book}>
@@ -98,6 +100,26 @@ const ManageBooks = () => {
                     </BookCard>
                 ))}
             </div>
+            
+            {books && (
+                <div className="pagination-controls">
+                    <button 
+                        className="page-btn" 
+                        disabled={page === 1} 
+                        onClick={() => setPage(prev => prev - 1)}
+                    >
+                        Previous
+                    </button>
+                    <span className="page-indicator">Page {page}</span>
+                    <button 
+                        className="page-btn" 
+                        disabled={books.length < 10} 
+                        onClick={() => setPage(prev => prev + 1)}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
