@@ -9,13 +9,24 @@ const AddBook = () => {
     const [error, setError] = useState(null);
 
     const handleCreateBook = async (bookData) => {
+        const formData = new FormData();
+        formData.append('title', bookData.title);
+        formData.append('author', bookData.author);
+        formData.append('description', bookData.description);
+        formData.append('price', bookData.price);
+        formData.append('genre', bookData.genre);
+        formData.append('stock', bookData.stock);
+        
+        if (bookData.image) {
+            formData.append('image', bookData.image);
+        }
+
         const res = await fetch("/api/books", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${user.token}`
             },
-            body: JSON.stringify(bookData)
+            body: formData
         });
 
         const json = await res.json();

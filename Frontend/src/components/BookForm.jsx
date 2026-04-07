@@ -41,8 +41,8 @@ const BookForm = ({ initialBook = null, onSubmit, error }) => {
                 <input type="number" id="price" value={price} onChange={(e) => setPrice(e.target.value)} step="0.01" required />
                 <label htmlFor="stock">Stock</label>
                 <input type="number" id="stock" value={stock} onChange={(e) => setStock(e.target.value)} required />
-                <label htmlFor="image">Image URL</label>
-                <input type="text" id="image" value={image} onChange={(e) => setImage(e.target.value)} />
+                <label htmlFor="image">Image</label>
+                <input type="file" accept="image/*" id="image" value={image} onChange={(e) => setImage(e.target.files[0])} />
                 <label htmlFor="description">Description</label>
                 <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required />
                 <button type="submit">{initialBook ? "Update Book" : "Create Book"}</button>

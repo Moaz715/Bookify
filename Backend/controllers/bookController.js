@@ -1,4 +1,11 @@
 const Book = require('../models/Book');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 module.exports.index = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -28,9 +35,30 @@ module.exports.getBook = async (req, res) => {
 };
 
 module.exports.createBook = async (req, res) => {
-    const { title, authors, genre, price, stock, image = "", description } = req.body;
-    const newBook = await Book.create({ title, authors, genre, price, stock, image, description });
-    res.status(200).json(newBook);
+
+    const { title, author, description, price, genre, stock } = req.body;
+    let imageUrl = '';
+
+        
+    if (req.file) {
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+            
+            
+        const result = await cloudinary.uploader.upload(dataURI, {
+            folder: "bookify_images",
+        });
+
+            
+        imageUrl = result.secure_url;
+    }
+
+        
+    const book = await Book.create({
+        title, author, description, price, genre, stock, image: imageUrl
+    });
+
+    res.status(201).json(book);
 };
 
 module.exports.updateBook = async (req, res) => {
