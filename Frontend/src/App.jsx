@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -18,7 +20,7 @@ import { useAuthContext } from './hooks/useAuthContext'
 
 function App() {
   const { user } = useAuthContext();
-  
+
   return (
     <div className='App'>
       <BrowserRouter>
@@ -27,14 +29,14 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/books/:id" element={<BookDetails />} />
-            
-            <Route 
-              path="/login" 
-              element={!user ? <Login /> : (user.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/" />)} 
+
+            <Route
+              path="/login"
+              element={!user ? <Login /> : (user.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/" />)}
             />
-            <Route 
-              path="/signup" 
-              element={!user ? <Signup /> : (user.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/" />)} 
+            <Route
+              path="/signup"
+              element={!user ? <Signup /> : (user.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/" />)}
             />
 
             <Route path="/cart" element={
@@ -64,7 +66,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/admin/books/edit/:id" element={
-              <ProtectedRoute requireAdmin={true}>
+              <ProtectedRoute requireAdmin={false}>
                 <EditBook />
               </ProtectedRoute>
             } />
@@ -76,6 +78,12 @@ function App() {
           </Routes>
         </div>
       </BrowserRouter>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        theme="colored"
+      />
     </div>
   )
 }

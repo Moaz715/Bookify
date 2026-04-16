@@ -6,6 +6,12 @@ const User = require('../models/User');
 module.exports.createOrder = async (req, res) => {
     const { items, totalAmount, stripePaymentId = "" } = req.body;
 
+    for(const item of items){
+        await Book.updateOne(
+                { _id: item.bookId },
+                { $inc: { stock: -item.quantity } }
+            );
+    }
     const newOrder = await Order.create({
         userId: req.user._id,
         items,

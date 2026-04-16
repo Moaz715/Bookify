@@ -5,18 +5,20 @@ import '../styles/BookDetails.css';
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import ReviewForm from "../components/ReviewForm";
+import { toast } from 'react-toastify';
 
 const BookDetails = () => {
     const { id } = useParams();
     const [book, setBook] = useState(null);
-    const [reviews, setReviews] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [qty, setQty] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const { dispatch } = useCartContext();
     const { user } = useAuthContext();
     const navigate = useNavigate();
-    const [error, setError] = useState(null);
     const [editReviewId, setEditReviewId] = useState(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true); 
 
     const handleCreateReview = async (reviewContent, reviewRating) => {
         if (!user) {
@@ -42,14 +44,16 @@ const BookDetails = () => {
                 totalReviews: json.totalBookReviews,
                 averageRating: json.averageRating
             }));
-            setError(null);
+            toast.success("Review posted!");
         } else {
-            setError(json.error);
+            toast.error(json.error);
         }
     }
 
 
     const handleEditReview = async (reviewId, updatedContent, updatedRating) => {
+        console.log("FRONTEND: 1. Sending PUT request for review:", reviewId);
+
         const res = await fetch(`/api/reviews/${reviewId}`, {
             method: 'PUT',
             headers: {
@@ -59,18 +63,24 @@ const BookDetails = () => {
             body: JSON.stringify({ description: updatedContent, rating: updatedRating })
         });
 
+        console.log("FRONTEND: 2. Server responded with status:", res.status);
+
         const json = await res.json();
+        console.log("FRONTEND: 3. Server JSON data:", json);
 
         if (res.ok) {
+            console.log("FRONTEND: 4. res.ok is TRUE! Updating state now...");
+
             setReviews(prev => prev.map(r => r._id === reviewId ? json.review : r));
             setBook(prev => ({
                 ...prev,
                 averageRating: json.averageRating
             }));
+
+            console.log("FRONTEND: 5. Closing the form...");
             setEditReviewId(null);
-            setError(null);
         } else {
-            setError(json.error);
+            console.error("FRONTEND: 4. res.ok is FALSE! Something failed.");
         }
     }
 
@@ -92,14 +102,16 @@ const BookDetails = () => {
                 totalReviews: json.totalBookReviews,
                 averageRating: json.averageRating
             }));
+            toast.success("Review deleted!");
         } else {
-            setError("Failed to delete Review");
+            toast.error("Failed to delete Review");
         }
     }
 
 
     const handleAddToCart = () => {
         if (!user) {
+            toast.info("Please log in to add items to your cart.");
             navigate('/login');
             return;
         }
@@ -107,6 +119,7 @@ const BookDetails = () => {
             type: 'ADD_BOOK',
             payload: { ...book, quantity: qty }
         });
+        toast.success(`${book.title} added to cart!`);
     }
 
     useEffect(() => {
@@ -124,7 +137,17 @@ const BookDetails = () => {
 
             if (res2.ok) {
                 const json2 = await res2.json();
-                setReviews(json2);
+                if(page === 1){
+                    setReviews(json2);
+                }else{
+                    setReviews(prevReviews => [...prevReviews, ...json2]);
+                }
+                if(json.length > 5){
+                    setHasMore(true);
+                }else{
+                    setHasMore(false);
+                }
+                
             }
         };
 
@@ -140,12 +163,14 @@ const BookDetails = () => {
                 <h2>{book.title}</h2>
                 <p className="price">${book.price}</p>
                 <p className="description">{book.description}</p>
-                <p>{book.genre}</p>
-                <p>{book.totalReviews}</p>
-                <p>{book.averageRating}/5</p>
+                <div className="book-meta">
+                    <p><strong>Genre:</strong> {book.genre}</p>
+                    <p><strong>Availability:</strong> {book.stock > 0 ? `${book.stock} in stock` : <span style={{ color: 'red' }}>Out of Stock</span>}</p>
+                    <p><strong>Reviews:</strong> ⭐ {book.averageRating} / 5 ({book.totalReviews} total)</p>
+                </div>
                 {user && user.role !== 'admin' && (
                     <>
-                        <input type="number" min="1" value={qty} onChange={(e) => setQty(Number(e.target.value))} />
+                        <input type="number" min="1" max={book.stock} value={qty} onChange={(e) => setQty(Number(e.target.value))} />
                         <button onClick={handleAddToCart}>Add to Cart</button>
                     </>
                 )}
@@ -153,7 +178,6 @@ const BookDetails = () => {
             {user && user.role !== 'admin' && (
                 <div className="review-form-container">
                     <h3>Leave a Review</h3>
-                    {error && <div className="error">{error}</div>}
                     <ReviewForm onSubmit={handleCreateReview} onCancel={null} />
                 </div>
             )}
@@ -184,6 +208,15 @@ const BookDetails = () => {
                         )}
                     </div>
                 ))}
+                {reviews && reviews.length > 0 && hasMore && (
+                    <div className="load-more-wrapper">
+                        <button
+                            className="load-more-btn"
+                            onClick={() => setPage(prev => prev + 1)}
+                        >
+                            Load More Reviews
+                        </button>
+                    </div>)}
             </div>
         </div>
     );

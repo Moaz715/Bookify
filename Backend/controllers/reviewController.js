@@ -54,14 +54,14 @@ module.exports.getBookReviews = async (req, res) => {
 module.exports.updateReview = async (req, res) => {
     const { reviewId } = req.params;
     const { description, rating } = req.body;
-
+    const NumRating = Number(rating);
     const oldReview = await Review.findById(reviewId);
     if(!oldReview) return res.status(404).json({message: "Review not found"});
 
     const updatedReview = await Review.findByIdAndUpdate(reviewId,
         {
             description,
-            rating
+            rating: NumRating
         },
         {
             new: true,
@@ -74,14 +74,15 @@ module.exports.updateReview = async (req, res) => {
     const book = await Book.findById(updatedReview.bookId);
     let newAverageRating = book.averageRating;
 
-    if (oldReview.rating !== rating) {
-        newAverageRating = ((book.averageRating * book.totalReviews) - oldReview.rating + rating) / book.totalReviews;
+    if (oldReview.rating !== NumRating) {
+        newAverageRating = ((book.averageRating * book.totalReviews) - oldReview.rating + NumRating) / book.totalReviews;
 
         await Book.findByIdAndUpdate(updatedReview.bookId, {
             averageRating: newAverageRating.toFixed(1)
         });
     }
 
+    console.log("BACKEND: Math finished successfully. Sending response back to React!");
     res.status(200).json({
         review: updatedReview,
         averageRating: newAverageRating.toFixed(1)

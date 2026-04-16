@@ -3,6 +3,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import {useState} from "react";
 import CartCard from "../components/CartCard";
 import '../styles/Home.css';
+import { toast } from 'react-toastify';
 
 const Cart = () => {
     const { cart, dispatch } = useCartContext();
@@ -16,7 +17,6 @@ const Cart = () => {
 
     const checkout = async () => {
         setIsLoading(true);
-        alert('gay')
         const formattedItems = cart.map(item => ({
             bookId: item._id,
             quantity: item.quantity,
@@ -36,10 +36,10 @@ const Cart = () => {
         });
         const json = await res.json();
         if (res.ok) {
-            dispatch({ type: 'CLEAR' }); 
-            alert("Order placed successfully!");
+            dispatch({ type: 'CLEAR' });
+            toast.success("Order placed successfully!");
         } else {
-            alert(json.error);
+            toast.error(json.error);
         }
         setIsLoading(false);
     }

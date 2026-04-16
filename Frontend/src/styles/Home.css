@@ -3,9 +3,45 @@
   font-size: 2rem;
 }
 
-/* This is the magic CSS Grid that makes your site responsive! */
 .books-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 30px;
+}
+
+.store-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.load-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.load-more-btn {
+    padding: 12px 30px;
+    background-color: transparent;
+    color: var(--primary, #2563eb);
+    border: 2px solid var(--primary, #2563eb);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.load-more-btn:hover {
+    background-color: var(--primary, #2563eb);
+    color: white;
+}
+
+.end-of-list-msg {
+    text-align: center;
+    color: #6b7280;
+    margin-top: 40px;
+    font-style: italic;
 }

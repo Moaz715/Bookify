@@ -14,7 +14,7 @@ module.exports.index = async (req, res) => {
     const filter = req.query.filter || 'None';
     const search = req.query.search || '';
 
-    let query = {};
+    let query = { stock: { $gt: 0 } };
     if(filter !== 'None'){
         query.genre = filter;
     }
