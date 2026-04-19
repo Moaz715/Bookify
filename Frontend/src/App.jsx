@@ -15,6 +15,7 @@ import AddBook from './pages/AddBook'
 import EditBook from './pages/EditBook'
 import ManageOrders from './pages/ManageOrders'
 import ProtectedRoute from './components/ProtectedRoute'
+import Success from './pages/Success';
 import './App.css'
 import { useAuthContext } from './hooks/useAuthContext'
 
@@ -75,6 +76,7 @@ function App() {
                 <ManageOrders />
               </ProtectedRoute>
             } />
+            <Route path="/success" element={<Success />} />
           </Routes>
         </div>
       </BrowserRouter>

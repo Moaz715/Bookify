@@ -6,6 +6,7 @@ const bookRoutes = require('./routes/bookRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 
 app.use(cors()); 
@@ -15,8 +16,9 @@ app.use(express.json());
 app.use('/api/books', bookRoutes);
 app.use('/api/books/:bookId/reviews', reviewRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/users/', userRoutes);
-app.use('/api/orders/', orderRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/payment', paymentRoutes);
 
 
 app.use((err, req, res, next) => {

@@ -22,7 +22,6 @@ const Cart = () => {
         setIsLoading(true);
 
         if (!user || !user.token) {
-            logout();
             toast.error("Please log in to checkout.");
             navigate('/login');
             setIsLoading(false);
@@ -31,18 +30,19 @@ const Cart = () => {
 
         const formattedItems = cart.map(item => ({
             bookId: item._id,
-            quantity: item.quantity,
-            priceAtPurchase: item.price
+            quantity: item.quantity
         }));
 
         try {
-            await api.post('/api/orders/', { items: formattedItems });
-            dispatch({ type: 'CLEAR' });
-            toast.success("Order placed successfully!");
+            const res = await api.post('/api/payment/create-checkout-session', { items: formattedItems });
+
+            if (res.data.url) {
+                localStorage.setItem('pendingOrder', JSON.stringify(formattedItems));
+                window.location.href = res.data.url;
+            }
         } catch (error) {
             const errorMsg = error.response?.data?.error || "Checkout failed.";
             toast.error(errorMsg);
-        } finally {
             setIsLoading(false);
         }
     }
