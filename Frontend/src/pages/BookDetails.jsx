@@ -6,6 +6,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import ReviewForm from "../components/ReviewForm";
 import { toast } from 'react-toastify';
+import api from "../utils/api";
 
 const BookDetails = () => {
     const { id } = useParams();
@@ -18,93 +19,56 @@ const BookDetails = () => {
     const navigate = useNavigate();
     const [editReviewId, setEditReviewId] = useState(null);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true); 
+    const [hasMore, setHasMore] = useState(true);
 
     const handleCreateReview = async (reviewContent, reviewRating) => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
-
-        const res = await fetch(`/api/books/${id}/reviews`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify({ description: reviewContent, rating: reviewRating })
-        })
-
-        const json = await res.json();
-
-        if (res.ok) {
-            setReviews([json.review, ...reviews]);
+        if (!user) return navigate('/login');
+        try {
+            const res = await api.post(`/api/books/${id}/reviews`, {
+                description: reviewContent,
+                rating: reviewRating
+            });
+            setReviews([res.data.review, ...reviews]);
             setBook(prev => ({
                 ...prev,
-                totalReviews: json.totalBookReviews,
-                averageRating: json.averageRating
+                totalReviews: res.data.totalBookReviews,
+                averageRating: res.data.averageRating
             }));
             toast.success("Review posted!");
-        } else {
-            toast.error(json.error);
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to post review");
         }
     }
 
 
     const handleEditReview = async (reviewId, updatedContent, updatedRating) => {
-        console.log("FRONTEND: 1. Sending PUT request for review:", reviewId);
-
-        const res = await fetch(`/api/reviews/${reviewId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify({ description: updatedContent, rating: updatedRating })
-        });
-
-        console.log("FRONTEND: 2. Server responded with status:", res.status);
-
-        const json = await res.json();
-        console.log("FRONTEND: 3. Server JSON data:", json);
-
-        if (res.ok) {
-            console.log("FRONTEND: 4. res.ok is TRUE! Updating state now...");
-
-            setReviews(prev => prev.map(r => r._id === reviewId ? json.review : r));
-            setBook(prev => ({
-                ...prev,
-                averageRating: json.averageRating
-            }));
-
-            console.log("FRONTEND: 5. Closing the form...");
+        try {
+            const res = await api.put(`/api/reviews/${reviewId}`, {
+                description: updatedContent,
+                rating: updatedRating
+            });
+            setReviews(prev => prev.map(r => r._id === reviewId ? res.data.review : r));
+            setBook(prev => ({ ...prev, averageRating: res.data.averageRating }));
             setEditReviewId(null);
-        } else {
-            console.error("FRONTEND: 4. res.ok is FALSE! Something failed.");
+            toast.success("Review updated!");
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to update review");
         }
     }
 
 
     const handleDeleteReview = async (reviewId) => {
-        const res = await fetch(`/api/reviews/${reviewId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            }
-        });
-
-        if (res.ok) {
-            const json = await res.json();
+        try {
+            const res = await api.delete(`/api/reviews/${reviewId}`);
             setReviews(prev => prev.filter(r => r._id !== reviewId));
             setBook(prev => ({
                 ...prev,
-                totalReviews: json.totalBookReviews,
-                averageRating: json.averageRating
+                totalReviews: res.data.totalBookReviews,
+                averageRating: res.data.averageRating
             }));
             toast.success("Review deleted!");
-        } else {
-            toast.error("Failed to delete Review");
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to delete review");
         }
     }
 
@@ -124,35 +88,27 @@ const BookDetails = () => {
 
     useEffect(() => {
         const fetchBookDetails = async () => {
-            const res1 = await fetch(`/api/books/${id}`);
-            const res2 = await fetch(`/api/books/${id}/reviews`);
+            try {
+                const [bookRes, reviewsRes] = await Promise.all([
+                    api.get(`/api/books/${id}`),
+                    api.get(`/api/books/${id}/reviews?page=${page}`)
+                ]);
 
-
-            if (res1.ok) {
-                const json1 = await res1.json();
-                setBook(json1);
-                setIsLoading(false);
-            }
-
-
-            if (res2.ok) {
-                const json2 = await res2.json();
-                if(page === 1){
-                    setReviews(json2);
-                }else{
-                    setReviews(prevReviews => [...prevReviews, ...json2]);
+                if (page === 1) {
+                    setBook(bookRes.data);
+                    setReviews(reviewsRes.data);
+                    setIsLoading(false);
+                } else {
+                    setReviews(prev => [...prev, ...reviewsRes.data]);
                 }
-                if(json.length > 5){
-                    setHasMore(true);
-                }else{
-                    setHasMore(false);
-                }
-                
+
+                setHasMore(reviewsRes.data.length === 5);
+            } catch (error) {
+                console.error(error);
             }
         };
-
         fetchBookDetails();
-    }, [id]);
+    }, [id, page]);
 
     if (isLoading) return <div>Loading book details...</div>;
 

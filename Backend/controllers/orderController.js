@@ -4,21 +4,40 @@ const User = require('../models/User');
 
 
 module.exports.createOrder = async (req, res) => {
-    const { items, totalAmount, stripePaymentId = "" } = req.body;
+    const { items, stripePaymentId = "" } = req.body;
 
+    const booksIds = items.map(i => i.bookId);
+    const realBooks = await Book.find({"_id":{$in: booksIds}});
+
+    let totalAmount = 0;
+    const finalItems = [];
     for(const item of items){
+        const realBook = realBooks.find(b => b._id.toString() === item.bookId);
+
+        if(!realBook) return res.status(404).json({error:'Book not found'});
+        if(realBook.stock < item.quantity) return res.status(400).json({error: 'Quantity more than stock'});
+
+        totalAmount += (item.quantity * realBook.price);
+        finalItems.push({
+            bookId: realBook._id,
+            quantity: item.quantity,
+            priceAtPurchase: realBook.price
+        });
+
         await Book.updateOne(
-                { _id: item.bookId },
-                { $inc: { stock: -item.quantity } }
-            );
+            { _id: item.bookId },
+            { $inc: { stock: -item.quantity } } 
+        );
     }
+
     const newOrder = await Order.create({
         userId: req.user._id,
-        items,
-        totalAmount,
+        items: finalItems,
+        totalAmount: totalAmount,
         status: "Processing",
         stripePaymentId
     });
+    
 
     res.status(201).json(newOrder);
 }

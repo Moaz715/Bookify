@@ -1,13 +1,16 @@
 import { useCartContext } from "../hooks/useCartContext";
 import { useAuthContext } from "../hooks/useAuthContext";
-import {useState} from "react";
+import { useLogout } from "../hooks/useLogout";
+import { useState } from "react";
 import CartCard from "../components/CartCard";
 import '../styles/Home.css';
 import { toast } from 'react-toastify';
+import api from '../utils/api';
 
 const Cart = () => {
     const { cart, dispatch } = useCartContext();
-    const {user} = useAuthContext();
+    const { user } = useAuthContext();
+    const { logout } = useLogout();
     const [isLoading, setIsLoading] = useState(false);
 
 
@@ -17,33 +20,33 @@ const Cart = () => {
 
     const checkout = async () => {
         setIsLoading(true);
+
+        if (!user || !user.token) {
+            logout();
+            toast.error("Please log in to checkout.");
+            navigate('/login');
+            setIsLoading(false);
+            return;
+        }
+
         const formattedItems = cart.map(item => ({
             bookId: item._id,
             quantity: item.quantity,
             priceAtPurchase: item.price
         }));
 
-        const res = await fetch('/api/orders/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}` 
-            },
-            body: JSON.stringify({
-                items: formattedItems,
-                totalAmount: grandTotal,
-            })
-        });
-        const json = await res.json();
-        if (res.ok) {
+        try {
+            await api.post('/api/orders/', { items: formattedItems });
             dispatch({ type: 'CLEAR' });
             toast.success("Order placed successfully!");
-        } else {
-            toast.error(json.error);
+        } catch (error) {
+            const errorMsg = error.response?.data?.error || "Checkout failed.";
+            toast.error(errorMsg);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     }
-    
+
 
     return (
         <div className="cart-page">

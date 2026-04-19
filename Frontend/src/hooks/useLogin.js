@@ -1,32 +1,29 @@
-import {useState} from "react";
-import {useAuthContext} from "./useAuthContext";
+import { useState } from "react";
+import { useAuthContext } from "./useAuthContext";
+import api from "../utils/api";
+import { toast } from "react-toastify"; // Added import
 
-
-export const useLogin = () =>{
+export const useLogin = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
-    const {dispatch} = useAuthContext();
+    const { dispatch } = useAuthContext();
 
-    const login = async (email, password) =>{
+    const login = async (email, password) => {
         setIsLoading(true);
         setError(null);
-        const res = await fetch('/api/users/login', {
-            method: 'POST',
-            headers: {'Content-Type' : 'application/json'},
-            body: JSON.stringify({email, password})
-        });
-
-        const json = await res.json();
-
-        if(!res.ok){
-            setIsLoading(false);
-            setError(json.error);
-        }else{
-            localStorage.setItem('user', JSON.stringify(json));
-            dispatch({type: 'LOGIN', payload: json});
-            setIsLoading(false);
+        
+        try {
+            const res = await api.post('/api/users/login', { email, password });
+            
+            localStorage.setItem('user', JSON.stringify(res.data));
+            dispatch({ type: 'LOGIN', payload: res.data });
+            toast.success("Welcome Back!");
+        } catch (error) {
+            setError(error.response?.data?.error || "Failed to log in");
+        } finally {
+            setIsLoading(false); 
         }
     }
 
-    return {login, isLoading, error};
+    return { login, isLoading, error };
 }
