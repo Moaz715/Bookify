@@ -19,7 +19,17 @@ const bookSchema = new Schema({
     genre: {
         type: String,
         required: true,
-        enum: ['Fiction', 'Non-Fiction', 'Sci-Fi', 'Fantasy', 'Mystery', 'Biography']
+        enum: [
+            'Fiction',
+            'Non-Fiction',
+            'Sci-Fi',
+            'Fantasy',
+            'Mystery',
+            'Biography',
+            'Technology',
+            'Engineering',
+            'Science'
+        ]
     },
     price: {
         type: Number,

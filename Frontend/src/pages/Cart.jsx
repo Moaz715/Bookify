@@ -10,7 +10,6 @@ import api from '../utils/api';
 const Cart = () => {
     const { cart, dispatch } = useCartContext();
     const { user } = useAuthContext();
-    const { logout } = useLogout();
     const [isLoading, setIsLoading] = useState(false);
 
 

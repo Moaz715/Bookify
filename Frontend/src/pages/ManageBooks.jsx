@@ -113,7 +113,7 @@ const ManageBooks = () => {
                     <span className="page-indicator">Page {page}</span>
                     <button 
                         className="page-btn" 
-                        disabled={books.length < 10} 
+                        disabled={books.length < 8} 
                         onClick={() => setPage(prev => prev + 1)}
                     >
                         Next

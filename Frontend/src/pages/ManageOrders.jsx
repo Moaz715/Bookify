@@ -25,7 +25,7 @@ const ManageOrders = () => {
             if (res.ok) {
                 setOrders(json);
             } else {
-                alert(json.error);
+                console.log(json.error);
             }
         };
 

@@ -9,7 +9,7 @@ cloudinary.config({
 
 module.exports.index = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = 5;
+    const limit = 8;
     const skip = (page-1) * limit;
     const filter = req.query.filter || 'None';
     const search = req.query.search || '';

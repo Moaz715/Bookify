@@ -25,8 +25,10 @@ const Home = () => {
                     setBooks(prevBooks => [...prevBooks, ...res.data]);
                 }
 
-                if (res.data.length < 5) {
+                if (res.data.length < 8) {
                     setHasMore(false);
+                }else{
+                    setHasMore(true);
                 }
             } catch (error) {
                 console.error("Failed to fetch books:", error);
