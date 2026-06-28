@@ -63,10 +63,10 @@ module.exports.createBook = async (req, res) => {
 
 module.exports.updateBook = async (req, res) => {
     const { id } = req.params;
-    const { title, authors, genre, price, stock, image = "", description } = req.body;
+    const { title, author, genre, price, stock, image = "", description } = req.body;
     
     const updatedBook = await Book.findByIdAndUpdate(id,
-        { title, authors, genre, price, stock, image, description },
+        { title, author, genre, price, stock, image, description },
         { new: true, runValidators: true }
     );
     

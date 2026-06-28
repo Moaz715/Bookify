@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import BookForm from "../components/BookForm";
+import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 const EditBook = () => {
     const { id } = useParams();
@@ -13,31 +15,25 @@ const EditBook = () => {
 
     useEffect(() => {
         const fetchBook = async () => {
-            const res = await fetch(`/api/books/${id}`);
-            const json = await res.json();
-            if (res.ok) {
-                setInitialBook(json);
+            try {
+                const res = await api.get(`/api/books/${id}`);
+                setInitialBook(res.data);
+            } catch (error) {
+                toast.error("Could not load book details.");
             }
         };
         fetchBook();
     }, [id]);
 
     const handleEditBook = async (bookData) => {
-        const res = await fetch(`/api/books/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify(bookData)
-        });
-
-        const json = await res.json();
-
-        if (res.ok) {
-            navigate(`/books/${json._id}`);
-        } else {
-            setError(json.error);
+        try {
+            const res = await api.put(`/api/books/${id}`, bookData);
+            toast.success("Book updated successfully!");
+            navigate(`/books/${res.data._id}`);
+        } catch (error) {
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || "Failed to update book";
+            setError(errorMsg);
+            toast.error(errorMsg);
         }
     };
 

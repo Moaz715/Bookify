@@ -12,8 +12,8 @@ const bookSchema = new Schema({
         type: String,
         required: true
     },
-    authors: {
-        type: [String],
+    author: {
+        type: String,
         required: true
     },
     genre: {

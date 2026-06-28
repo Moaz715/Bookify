@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import '../styles/Orders.css';
 import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 const UserOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -25,7 +26,7 @@ const UserOrders = () => {
                     setHasMore(false);
                 }
             } catch (error) {
-                console.error("Failed to fetch orders:", error);
+                toast.error(error.response?.data?.error || "Failed to fetch orders");
             }
         }
         if (user) {
@@ -53,7 +54,7 @@ const UserOrders = () => {
                         className="load-more-btn"
                         onClick={() => setPage(prev => prev + 1)}
                     >
-                        Load More Books
+                        Load More Orders
                     </button>
                 </div>
             )}

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import BookForm from "../components/BookForm";
+import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 const AddBook = () => {
     const { user } = useAuthContext();
@@ -21,20 +23,14 @@ const AddBook = () => {
             formData.append('image', bookData.image);
         }
 
-        const res = await fetch("/api/books", {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: formData
-        });
-
-        const json = await res.json();
-
-        if (res.ok) {
-            navigate(`/books/${json._id}`);
-        } else {
-            setError(json.error);
+        try {
+            const res = await api.post("/api/books", formData);
+            toast.success("Book created successfully!");
+            navigate(`/books/${res.data._id}`);
+        } catch (error) {
+            const errorMsg = error.response?.data?.error || error.response?.data?.message || "Failed to create book";
+            setError(errorMsg);
+            toast.error(errorMsg);
         }
     };
 

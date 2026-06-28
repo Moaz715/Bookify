@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 import '../styles/AdminDashboard.css'; 
 import { useState, useEffect } from 'react';
+import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 const AdminDashboard = () => {
     const { user } = useAuthContext();
@@ -11,24 +13,19 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchStats = async () => {
-            const res = await fetch("/api/orders/stats", {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-
-            const json = await res.json();
-
-            if (res.ok) {
-                setBooksCount(json.booksCount);
-                setProcessingOrdersCount(json.ordersCount);
-                setTotalRevenue(json.totalRevenue.toFixed(2)); 
-            }else{
-                alert(json.error);
+            try {
+                const res = await api.get("/api/orders/stats");
+                setBooksCount(res.data.booksCount);
+                setProcessingOrdersCount(res.data.ordersCount);
+                setTotalRevenue(res.data.totalRevenue.toFixed(2)); 
+            } catch (error) {
+                toast.error(error.response?.data?.error || "Failed to load dashboard stats");
             }
         };
 
-        fetchStats()
+        if (user) {
+            fetchStats();
+        }
     }, [user]);
 
     return (

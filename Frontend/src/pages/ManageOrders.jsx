@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import OrderList from "../components/OrderList";
 import "../styles/ManageOrders.css";
+import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 
 const ManageOrders = () => {
@@ -14,46 +16,29 @@ const ManageOrders = () => {
 
     useEffect(() => {
         const fetchOrders = async () => {
-            const res = await fetch(`/api/orders?page=${page}&search=${search}`, {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-
-            const json = await res.json();
-
-            if (res.ok) {
-                setOrders(json);
-            } else {
-                console.log(json.error);
+            try {
+                const res = await api.get(`/api/orders?page=${page}&search=${search}`);
+                setOrders(res.data);
+            } catch (error) {
+                toast.error(error.response?.data?.error || "Failed to load orders");
             }
         };
 
-        fetchOrders()
-    }, [user, page, search]);
+        fetchOrders();
+    }, [page, search]);
 
     const handleStatusChange = async (id, status) => {
-        const res = await fetch(`/api/orders/${id}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.token}`
-            },
-            body: JSON.stringify({ status })
-        });
-
-        const json = await res.json();
-
-        if (res.ok) {
+        try {
+            await api.put(`/api/orders/${id}`, { status });
             setOrders(orders.map((o) => {
                 if (o._id === id) {
                     return { ...o, status: status };
-                } else {
-                    return o;
                 }
-            }))
-        } else {
-            alert(json.error);
+                return o;
+            }));
+            toast.success(`Order status updated to ${status}`);
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to update status");
         }
     }
 

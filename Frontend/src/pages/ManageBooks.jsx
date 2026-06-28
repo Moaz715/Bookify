@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import BookCard from "../components/BookCard";
 import "../styles/ManageBooks.css";
+import api from "../utils/api";
+import { toast } from 'react-toastify';
 
 const ManageBooks = () => {
     const [books, setBooks] = useState(null);
@@ -15,13 +17,11 @@ const ManageBooks = () => {
 
     useEffect(() => {
         const fetchBooks = async () => {
-            const res = await fetch(`/api/books?page=${page}&filter=${filter}&search=${search}`);
-            const json = await res.json();
-
-            if (res.ok) {
-                setBooks(json);
-            } else {
-                alert(json.error);
+            try {
+                const res = await api.get(`/api/books?page=${page}&filter=${filter}&search=${search}`);
+                setBooks(res.data);
+            } catch (error) {
+                toast.error(error.response?.data?.error || "Failed to load inventory");
             }
         };
         fetchBooks();
@@ -29,18 +29,13 @@ const ManageBooks = () => {
 
     const handleDelete = async (bookId) => {
         if (!window.confirm("Are you sure you want to delete this book?")) return;
-        const res = await fetch(`/api/books/${bookId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${user.token}`
-            }
-        });
-
-        if (res.ok) {
+        
+        try {
+            await api.delete(`/api/books/${bookId}`);
             setBooks(prevBooks => prevBooks.filter(b => b._id !== bookId));
-        } else {
-            const json = await res.json();
-            setError(json.error);
+            toast.success("Book deleted successfully");
+        } catch (error) {
+            toast.error(error.response?.data?.error || "Failed to delete book");
         }
     }
 
