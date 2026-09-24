@@ -23,8 +23,8 @@ const BookForm = ({ initialBook = null, onSubmit, error }) => {
             <form onSubmit={handleSubmit}>
                 <label htmlFor="title">Title</label>
                 <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-                <label htmlFor="authors">Author</label>
-                <input type="text" id="authors" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+                <label htmlFor="author">Author</label>
+                <input type="text" id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
                 <label htmlFor="genre">Genre</label>
                 <select id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} required>
                     <option value="" disabled>Select a genre</option>

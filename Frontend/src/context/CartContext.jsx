@@ -1,52 +1,50 @@
-import { createContext, useState, useReducer } from "react";
+import { createContext, useState } from "react";
 
 export const CartContext = createContext();
 
-export const cartReducer = (state, action) => {
-    if (action.type == 'ADD_BOOK') {
-        const exists = state.cart.find(book => book._id === action.payload._id);
+export const CartProvider = ({ children }) => {
+    const [cart, setCart] = useState([]);
 
-        if (exists) {
-            return {
-                cart: state.cart.map(book =>
-                    book._id === action.payload._id
-                        ? { ...book, quantity: book.quantity + action.payload.quantity }
-                        : book
-                )
-            };
-        } else {
-            return { cart: [...state.cart, action.payload] };
-        }
-    } else if (action.type == 'REMOVE_BOOK') {
-        return { cart: state.cart.filter(book => book._id !== action.payload._id) };
-    } else if (action.type == 'INCREMENT') {
-        return {
-            cart: state.cart.map(book => book._id === action.payload._id ? { ...book, quantity: book.quantity + 1 } : book)
-        }
-    } else if (action.type === 'DECREMENT') {
-        return {
-            cart: state.cart.map(book => book._id === action.payload._id && book.quantity > 1 ? { ...book, quantity: book.quantity - 1 } : book)
-        }
-    } else if (action.type === 'CLEAR') {
-        return {
-            cart: []
-        }
+    const additem = (newitem) =>{
+        setCart(prevCart => {
+            const exists = prevCart.find(item => item._id === newitem._id)
+            if(exists){
+                return prevCart.map(item =>{
+                    if(item._id === newitem._id){
+                        return { ...item, quantity: item.quantity + newitem.quantity}
+                    }else{
+                        return item
+                    }
+                })
+            }else{
+                return [...prevCart, newitem]
+            }
+        });
     }
-    else {
-        return state;
-    }
-}
 
-export const CartContextProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(cartReducer, {
-        cart: []
-    });
+    const removeitem = (itemId) =>{
+        setCart(prevCart => prevCart.filter(item => item._id !== itemId));
+    }
+
+    const increment = (itemId) =>{
+        setCart(prevCart => prevCart.map(item =>
+            item._id === itemId ? {...item, quantity: item.quantity + 1} : item
+        ));
+    }
+
+    const decrement = (itemId) =>{
+        setCart(prevCart => prevCart.map(item =>
+            item._id === itemId && item.quantity > 1 ? {...item, quantity: item.quantity - 1} : item
+        ));
+    }
+
+    const clearCart = () =>{
+        setCart([]);
+    }
 
     return (
-        <CartContext.Provider value={{ ...state, dispatch }}>
+        <CartContext.Provider value={{ cart, additem, removeitem, increment, decrement, clearCart }}>
             {children}
         </CartContext.Provider>
-    )
-
+    );
 }
-
