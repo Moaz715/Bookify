@@ -61,6 +61,7 @@ mongoose.connect(URI)
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
+    module.exports = app;
   })
   .catch((error) => {
     console.error('Database connection failed:', error);
