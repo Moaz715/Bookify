@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useCartContext } from "../hooks/useCartContext";
-import '../styles/BookDetails.css';
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useNavigate } from "react-router-dom";
 import ReviewForm from "../components/ReviewForm";
 import { toast } from 'react-toastify';
 import api from "../utils/api";
+import '../styles/BookDetails.css';
 
 const BookDetails = () => {
     const { id } = useParams();
@@ -14,7 +13,8 @@ const BookDetails = () => {
     const [reviews, setReviews] = useState([]);
     const [qty, setQty] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
-    const { dispatch } = useCartContext();
+
+    const { addItem } = useCartContext();
     const { user } = useAuthContext();
     const navigate = useNavigate();
     const [editReviewId, setEditReviewId] = useState(null);
@@ -29,17 +29,12 @@ const BookDetails = () => {
                 rating: reviewRating
             });
             setReviews([res.data.review, ...reviews]);
-            setBook(prev => ({
-                ...prev,
-                totalReviews: res.data.totalBookReviews,
-                averageRating: res.data.averageRating
-            }));
+            setBook(prev => ({ ...prev, totalReviews: prev.totalReviews + 1 }));
             toast.success("Review posted!");
         } catch (error) {
             toast.error(error.response?.data?.error || "Failed to post review");
         }
     }
-
 
     const handleEditReview = async (reviewId, updatedContent, updatedRating) => {
         try {
@@ -48,7 +43,6 @@ const BookDetails = () => {
                 rating: updatedRating
             });
             setReviews(prev => prev.map(r => r._id === reviewId ? res.data.review : r));
-            setBook(prev => ({ ...prev, averageRating: res.data.averageRating }));
             setEditReviewId(null);
             toast.success("Review updated!");
         } catch (error) {
@@ -56,22 +50,16 @@ const BookDetails = () => {
         }
     }
 
-
     const handleDeleteReview = async (reviewId) => {
         try {
-            const res = await api.delete(`/api/reviews/${reviewId}`);
+            await api.delete(`/api/reviews/${reviewId}`);
             setReviews(prev => prev.filter(r => r._id !== reviewId));
-            setBook(prev => ({
-                ...prev,
-                totalReviews: res.data.totalBookReviews,
-                averageRating: res.data.averageRating
-            }));
+            setBook(prev => ({ ...prev, totalReviews: prev.totalReviews - 1 }));
             toast.success("Review deleted!");
         } catch (error) {
             toast.error(error.response?.data?.error || "Failed to delete review");
         }
     }
-
 
     const handleAddToCart = () => {
         if (!user) {
@@ -79,38 +67,39 @@ const BookDetails = () => {
             navigate('/login');
             return;
         }
-        dispatch({
-            type: 'ADD_BOOK',
-            payload: { ...book, quantity: qty }
-        });
+        addItem({ ...book, quantity: qty });
         toast.success(`${book.title} added to cart!`);
     }
 
     useEffect(() => {
-        const fetchBookDetails = async () => {
+        const fetchData = async () => {
             try {
-                const [bookRes, reviewsRes] = await Promise.all([
-                    api.get(`/api/books/${id}`),
-                    api.get(`/api/books/${id}/reviews?page=${page}`)
-                ]);
-
                 if (page === 1) {
+                    const [bookRes, reviewsRes] = await Promise.all([
+                        api.get(`/api/books/${id}`),
+                        api.get(`/api/books/${id}/reviews?page=${page}`)
+                    ]);
+
                     setBook(bookRes.data);
                     setReviews(reviewsRes.data);
                     setIsLoading(false);
+                    setHasMore(reviewsRes.data.length === 10);
                 } else {
+                    const reviewsRes = await api.get(`/api/books/${id}/reviews?page=${page}`);
                     setReviews(prev => [...prev, ...reviewsRes.data]);
+                    setHasMore(reviewsRes.data.length === 10);
                 }
-
-                setHasMore(reviewsRes.data.length === 5);
             } catch (error) {
-                console.error(error);
+                console.error("Failed to fetch data:", error);
+                toast.error("Failed to load data");
             }
         };
-        fetchBookDetails();
+        
+        fetchData();
     }, [id, page]);
 
     if (isLoading) return <div>Loading book details...</div>;
+    if (!book) return <div>Book not found.</div>;
 
     return (
         <div className="book-details">
@@ -122,7 +111,7 @@ const BookDetails = () => {
                 <div className="book-meta">
                     <p><strong>Genre:</strong> {book.genre}</p>
                     <p><strong>Availability:</strong> {book.stock > 0 ? `${book.stock} in stock` : <span style={{ color: 'red' }}>Out of Stock</span>}</p>
-                    <p><strong>Reviews:</strong> ⭐ {book.averageRating} / 5 ({book.totalReviews} total)</p>
+                    <p><strong>Reviews:</strong> {book.totalReviews} total</p>
                 </div>
                 {user && user.role !== 'admin' && (
                     <>
@@ -146,7 +135,7 @@ const BookDetails = () => {
                             <ReviewForm initialContent={review.description} initialRating={review.rating} onSubmit={(newContent, newRating) => handleEditReview(review._id, newContent, newRating)} onCancel={() => setEditReviewId(null)} buttonText="Edit Review" />
                         ) : (
                             <>
-                                <p className="review-text"><strong>{review.userId.email}</strong></p>
+                                <p className="review-text"><strong>{review.userId?.email || 'Unknown User'}</strong></p>
                                 <p className="review-text">"{review.description}"</p>
                                 <p className="review-meta">
                                     <strong>Rating: {review.rating}/5</strong>
@@ -154,7 +143,7 @@ const BookDetails = () => {
                                         {new Date(review.createdAt).toLocaleDateString()}
                                     </span>
                                 </p>
-                                {user && user.email === review.userId.email && (
+                                {user && review.userId && user.email === review.userId.email && (
                                     <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                                         <button onClick={() => setEditReviewId(review._id)}>Edit</button>
                                         <button onClick={() => handleDeleteReview(review._id)}>Delete</button>

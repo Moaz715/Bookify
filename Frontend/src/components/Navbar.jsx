@@ -1,17 +1,13 @@
 import { Link } from "react-router-dom";
-import { useLogout } from '../hooks/useLogout'
 import '../styles/Navbar.css';
 import { useAuthContext } from "../hooks/useAuthContext";
 
 
 const Navbar = () => {
 
-    const { logout } = useLogout();
-    const {user} = useAuthContext();
+    const {user, logout} = useAuthContext();
 
-    const handleClick = () => {
-        logout()
-    }
+    
 
     return (
         <header>
@@ -20,7 +16,7 @@ const Navbar = () => {
                     <h1>Bookify</h1>
                 </Link>
                 <nav>
-                    {user && <button onClick={handleClick}>Log out</button>}
+                    {user && <button onClick={() => logout()}>Log out</button>}
                     {user && user.role === 'user' && <div>
                         <Link to="/cart">Cart</Link>
                         <Link to="/orders">My Orders</Link>

@@ -2,18 +2,18 @@ import { useCartContext } from "../hooks/useCartContext";
 import '../styles/Cards.css';
 
 const CartCard = ({ book }) => {
-    const { dispatch } = useCartContext();
+    const { increment, decrement, removeItem } = useCartContext();
     
     const handleInc = () => {
-        dispatch({ type: 'INCREMENT', payload: book });
+        increment(book._id);
     }
     
     const handleDec = () => {
-        dispatch({ type: 'DECREMENT', payload: book });
+        decrement(book._id);
     }
     
     const handleRemove = () => {
-        dispatch({ type: 'REMOVE_BOOK', payload: book });
+        removeItem(book._id);
     }
 
     return (

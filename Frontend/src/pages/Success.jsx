@@ -8,7 +8,7 @@ import '../styles/Success.css';
 const Success = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get("session_id");
-    const { cart, dispatch } = useCartContext();
+    const { clearCart } = useCartContext();
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(true);
     const hasProcessed = useRef(false);
@@ -36,7 +36,7 @@ const Success = () => {
                     stripePaymentId: sessionId
                 });
 
-                dispatch({ type: 'CLEAR' });
+                clearCart();
                 localStorage.removeItem('pendingOrder');
                 setIsProcessing(false);
 
@@ -48,12 +48,12 @@ const Success = () => {
         };
 
         finalizeOrder();
-    }, [sessionId, navigate, dispatch]);
+    }, [sessionId, navigate, clearCart]);
 
     return (
         <div className="success-page">
             {isProcessing ? (
-                <h2>Processing your order... Please do not close this page. ⏳</h2>
+                <h2>Processing your order... Please do not close this page.</h2>
             ) : (
                 <>
                     <h1 className="success-title">Success!</h1>

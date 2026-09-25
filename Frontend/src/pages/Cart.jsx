@@ -1,6 +1,6 @@
 import { useCartContext } from "../hooks/useCartContext";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { useLogout } from "../hooks/useLogout";
+import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import CartCard from "../components/CartCard";
 import '../styles/Home.css';
@@ -8,9 +8,10 @@ import { toast } from 'react-toastify';
 import api from '../utils/api';
 
 const Cart = () => {
-    const { cart, dispatch } = useCartContext();
+    const { cart } = useCartContext();
     const { user } = useAuthContext();
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
 
     const grandTotal = cart.reduce((sum, book) => {
@@ -20,7 +21,7 @@ const Cart = () => {
     const checkout = async () => {
         setIsLoading(true);
 
-        if (!user || !user.token) {
+        if (!user) {
             toast.error("Please log in to checkout.");
             navigate('/login');
             setIsLoading(false);

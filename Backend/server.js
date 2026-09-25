@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const bookRoutes = require('./routes/bookRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -9,8 +10,12 @@ const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const app = express();
 
-app.use(cors()); 
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    credentials: true
+})); 
 app.use(express.json()); 
+app.use(cookieParser());
 
 
 app.use('/api/books', bookRoutes);
